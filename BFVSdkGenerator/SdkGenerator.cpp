@@ -40,6 +40,7 @@ namespace BackendBf4
     }
 
 
+    /*
     void SDK_GENERATOR::Analyze()
     {
         if (!m_sdkClasses->empty()) for (std::vector<PSDK_CLASS>::iterator iter = m_sdkClasses->begin(); iter != m_sdkClasses->end(); iter++) delete* iter;
@@ -49,7 +50,7 @@ namespace BackendBf4
         AnalyzeClasses();
         AnalyzeEnums();
         AnalyzeStructs();
-    }
+    }*/
 
 
     void SDK_GENERATOR::AnalyzeClasses()
@@ -203,7 +204,7 @@ namespace BackendBf4
         }
     }
 
-
+    /*
     void SDK_GENERATOR::AnalyzeEnums()
     {
         // Narrow down typeInfos to enumInfos
@@ -274,9 +275,9 @@ namespace BackendBf4
                 }
             }
         }
-    }
+    }*/
 
-
+    /*
     void SDK_GENERATOR::AnalyzeStructs()
     {
         // Narrow down typeInfos to valueInfos
@@ -405,7 +406,7 @@ namespace BackendBf4
                 }
             }
         }
-    }
+    }*/
 
     using namespace nlohmann;
 
@@ -432,6 +433,12 @@ namespace BackendBf4
         return members;
     }
 
+    std::string hexifyAddress(void* address) {
+        char buf[64]; 
+        sprintf_s(buf, "0x%p", address);
+        return std::string(buf);
+    }
+
     json SDK_GENERATOR::Generate() {
         json j;
 
@@ -443,13 +450,13 @@ namespace BackendBf4
             s["name"] = c->m_name;
             if(c->m_parent)
                 s["parent"] = c->m_parent->m_name;
-            char buf[64]; sprintf_s(buf, "0x%p", c->m_rawDefaultInstance);
-            s["defaultInstance"] = std::string(buf);
+            s["defaultInstance"] = hexifyAddress(c->m_rawDefaultInstance);
             s["runtimeId"] = c->m_runtimeId;
             s["size"] = c->m_size;
             s["dependencies"] = serializeDependencies(c->m_sdkClassDependencies);
             s["members"] = serializeMembers(c->m_sdkClassMembers);
             s["module"] = std::string(c->m_rawClassInfo->GetTypeInfoData()->m_Module->m_ModuleName);
+            s["typeinfo"] = hexifyAddress(c->m_rawClassInfo);
 
             classes.push_back(s);
         }
@@ -464,6 +471,7 @@ namespace BackendBf4
             s["dependencies"] = serializeDependencies(c->m_sdkStructDependencies);
             s["members"] = serializeMembers(c->m_sdkStructMembers);
             s["module"] = std::string(c->m_rawValueInfo->GetTypeInfoData()->m_Module->m_ModuleName);
+            s["typeinfo"] = hexifyAddress(c->m_rawValueInfo);
             structs.push_back(s);
         }
         j["structs"] = structs;
@@ -482,6 +490,7 @@ namespace BackendBf4
                 values.push_back(v);
             }
             s["values"] = values;
+            s["typeinfo"] = hexifyAddress(c->m_rawEnumInfo);
             enums.push_back(s);
         }
         j["enums"] = enums;
@@ -756,11 +765,21 @@ namespace BackendBf4
         case fb::kTypeCode_Guid:
             return "Guid";
         case fb::kTypeCode_Void:
+            return "Void";
         case fb::kTypeCode_DbObject:
+            return "DbObject";
         case fb::kTypeCode_String:
+            return "String";
         case fb::kTypeCode_FileRef:
+            return "FileRef";
         case fb::kTypeCode_SHA1:
+            return "SHA1";
         case fb::kTypeCode_ResourceRef:
+            return "ResourceRef";
+        case fb::kTypeCode_TypeRef:
+            return "TypeRef";
+        case fb::kTypeCode_BoxedValueRef:
+            return "BoxedValueRef";
         default:
             return "// unhandled basic type " + typeInfo->GetTypeName();
         }

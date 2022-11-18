@@ -37,7 +37,7 @@ namespace fb
         kTypeCode_Guid,
         kTypeCode_SHA1,
         kTypeCode_ResourceRef,
-        kTypeCode_BasicTypeCount,
+        kTypeCode_Function,
         kTypeCode_TypeRef,
         kTypeCode_BoxedValueRef
     };
@@ -79,6 +79,7 @@ namespace fb
             MemberInfoFlags m_Flags; //0x0008
 
         };//Size=0x000A
+        static_assert(sizeof(MemberInfoData) == 0xA, "bad MemberInfoData");
 
         MemberInfoData* m_InfoData; //0x0000
 
@@ -117,6 +118,7 @@ namespace fb
     };//Size=0x0018
 #pragma pack(pop)
 
+#pragma pack(push, 1)
     class FieldInfo : public MemberInfo
     {
     public:
@@ -129,6 +131,7 @@ namespace fb
             TypeInfo* m_FieldTypePtr; //0x0010
 
         };//Size=0x0018
+        static_assert(sizeof(FieldInfoData) == 0x18, "bad FieldInfoData");
 
         virtual TypeInfo* GetDeclaringType();
         virtual unsigned short GetFieldIndex();
@@ -143,6 +146,7 @@ namespace fb
         FieldInfoData* GetFieldInfoData();
 
     };//Size=0x0020
+#pragma pack(pop, 1)
 
 #pragma pack(push, 1)
     class ClassInfo : public TypeInfo
@@ -155,6 +159,8 @@ namespace fb
             FieldInfo::FieldInfoData* m_Fields; //0x0030
         };//Size=0x0038
         static_assert(sizeof(ClassInfoData) == 0x38, "bad ClassInfoData");
+
+        char pad[8 * 4];
 
         ClassInfo* m_Super; //0x0018 
         DataContainer* m_DefaultInstance; //0x0020 
@@ -194,7 +200,18 @@ namespace fb
     public:
         struct EnumFieldInfoData : TypeInfo::TypeInfoData
         {
-            FieldInfo::FieldInfoData* m_Fields; //0x0020 	
+            // ew
+#pragma pack(push, 1)
+            struct EnumFieldInfoDataField : MemberInfo::MemberInfoData
+            {
+                char off[6];
+                unsigned short m_FieldOffset; //0x000A
+                char _0x000C[6];
+            };//Size=0x0018
+#pragma pack(pop)
+            static_assert(sizeof(EnumFieldInfoDataField) == 0x18, "bad EnumFieldInfoDataField");
+
+            EnumFieldInfoDataField* m_Fields; //0x0020 	
 
         };//Size=0x0028
 

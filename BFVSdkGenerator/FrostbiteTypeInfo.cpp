@@ -84,7 +84,7 @@ namespace fb
                 Type = kTypeCode_ResourceRef;
                 break;
             case 0x0300:
-                Type = kTypeCode_BasicTypeCount;
+                Type = kTypeCode_Function;
                 break;
             case 0x0320:
                 Type = kTypeCode_TypeRef;
@@ -95,7 +95,7 @@ namespace fb
             }
             return Type;
         }
-        return kTypeCode_BasicTypeCount;
+        return kTypeCode_Void;
     }
 
 
@@ -127,6 +127,9 @@ namespace fb
         case kTypeCode_Guid: return "Guid";
         case kTypeCode_SHA1: return "SHA1";
         case kTypeCode_ResourceRef: return "ResourceRef";
+        case kTypeCode_Function: return "Function";
+        case kTypeCode_TypeRef: return "TypeRef";
+        case kTypeCode_BoxedValueRef: return "BoxedValueRef";
         default:
             char buffer[32];
             sprintf_s(buffer, "Undefined[%i]", GetTypeCode());
