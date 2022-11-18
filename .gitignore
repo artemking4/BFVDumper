@@ -1,0 +1,4 @@
+.vs
+*.vcxproj.user
+BFVSdkGenerator/x64
+x64
