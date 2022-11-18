@@ -449,6 +449,8 @@ namespace BackendBf4
             s["size"] = c->m_size;
             s["dependencies"] = serializeDependencies(c->m_sdkClassDependencies);
             s["members"] = serializeMembers(c->m_sdkClassMembers);
+            s["module"] = std::string(c->m_rawClassInfo->GetTypeInfoData()->m_Module->m_ModuleName);
+
             classes.push_back(s);
         }
         j["classes"] = classes;
@@ -461,6 +463,7 @@ namespace BackendBf4
             s["size"] = c->m_size;
             s["dependencies"] = serializeDependencies(c->m_sdkStructDependencies);
             s["members"] = serializeMembers(c->m_sdkStructMembers);
+            s["module"] = std::string(c->m_rawValueInfo->GetTypeInfoData()->m_Module->m_ModuleName);
             structs.push_back(s);
         }
         j["structs"] = structs;
@@ -470,6 +473,7 @@ namespace BackendBf4
             json s;
             s["name"] = c->m_name;
             s["runtimeId"] = c->m_runtimeId;
+            s["module"] = std::string(c->m_rawEnumInfo->GetTypeInfoData()->m_Module->m_ModuleName);
             json values;
             for (auto e : c->m_sdkEnumFields) {
                 json v;

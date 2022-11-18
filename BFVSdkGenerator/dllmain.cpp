@@ -13,7 +13,7 @@ void Thread(HMODULE mod) {
     printf("Oh, hello there\n");
 
     PSDK_GENERATOR sdkGenerator = new SDK_GENERATOR();
-    fb::TypeInfo** g_firstTypeInfoPtr = (fb::TypeInfo**)0x144F7E670;
+    //fb::TypeInfo** g_firstTypeInfoPtr = (fb::TypeInfo**)0x144F7E670;
     fb::TypeInfo* g_firstTypeInfo = (fb::TypeInfo*)0x144F7E670;
 
     fb::TypeInfo* currentTypeInfo = g_firstTypeInfo;
